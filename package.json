@@ -1,0 +1,29 @@
+{
+  "private": true,
+  "name": "experiterm",
+  "description": "Monorepo for housing the Experiterm",
+  "workspaces": [
+    "packages/*"
+  ],
+  "dependencies": {
+    "react": "^17.0.2",
+    "react-dom": "^17.0.2",
+    "simplestyle-js": "^3.1.0"
+  },
+  "devDependencies": {
+    "@commitlint/cli": "12.1.4",
+    "@commitlint/config-conventional": "12.1.4",
+    "@types/node": "^16.4.0",
+    "eslint-config-react-yas": "^1.3.0",
+    "lerna": "^4.0.0",
+    "lint-staged": "^11.0.1",
+    "parcel": "^2.0.0-beta.3.1",
+    "typescript": "^4.3.5"
+  },
+  "scripts": {
+    "bootstrap": "yarn && yarn lerna bootstrap"
+  },
+  "lint-staged": {
+    "*.{ts,tsx}": "yarn lint"
+  }
+}

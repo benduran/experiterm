@@ -1,0 +1,14 @@
+{
+  "name": "@experiterm/daemon",
+  "version": "0.0.1",
+  "description": "Server daemon for the experiterm",
+  "main": "index.js",
+  "author": "Benjamin Duran <stratodyne@gmail.com>",
+  "license": "MIT",
+  "private": true,
+  "devDependencies": {},
+  "dependencies": {
+    "express": "^4.17.1",
+    "ws": "^7.5.3"
+  }
+}

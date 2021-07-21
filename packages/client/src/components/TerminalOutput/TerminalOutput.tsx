@@ -1,5 +1,6 @@
 import React from 'react';
 import { useCreateStyles } from 'simplestyle-js/esm/react';
+
 import { borderRadius, colors, spacings, toPx } from '../../theme';
 
 export const TerminalOutput = () => {

@@ -27,7 +27,11 @@
   },
   "scripts": {
     "bootstrap": "yarn && yarn lerna bootstrap",
-    "start:ui": "yarn workspace @experiterm/client start"
+    "git-commit-msg": "commitlint <",
+    "git-pre-commit": "lerna run --stream precommit --since HEAD",
+    "lint": "lerna run lint",
+    "start:ui": "yarn workspace @experiterm/client start",
+    "start:daemon": "yarn workspace @experiterm/daemon start"
   },
   "lint-staged": {
     "*.{ts,tsx}": "yarn lint"

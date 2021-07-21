@@ -21,3 +21,7 @@ rawStyles({
 });
 
 render(<App />, document.getElementById('root'));
+
+const ws = new WebSocket(`ws://${window.location.hostname}:2345/stdio`);
+ws.addEventListener('open', () => console.info('Stdio socket is open'));
+ws.addEventListener('error', console.error);

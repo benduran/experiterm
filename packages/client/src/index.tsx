@@ -1,9 +1,23 @@
+import 'normalize.css';
+
 import React from 'react';
 import { render } from 'react-dom';
+import { rawStyles } from 'simplestyle-js';
 
-let s = 'thing';
-s = 123;
+import { App } from './components/App';
+import { fontSizes, toPx } from './theme';
 
-console.info(s);
+rawStyles({
+  html: {
+    fontFamily: 'monospace',
+    fontSize: toPx(fontSizes.fontSize1),
+  },
+  '*': {
+    '&:focus': {
+      outline: 0,
+    },
+    boxSizing: 'border-box',
+  },
+});
 
-render(<div>Stuff</div>, document.getElementById('root'));
+render(<App />, document.getElementById('root'));

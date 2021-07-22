@@ -1,6 +1,7 @@
 import React from 'react';
 import { useCreateStyles } from 'simplestyle-js/esm/react';
 
+import { StdioSocketProvider } from '../../context';
 import { colors, spacings, toPx } from '../../theme';
 import { TerminalInput } from '../TerminalInput';
 import { TerminalOutput } from '../TerminalOutput';
@@ -20,9 +21,11 @@ export const App = () => {
     },
   });
   return (
-    <section className={classes.app}>
-      <TerminalOutput />
-      <TerminalInput />
-    </section>
+    <StdioSocketProvider>
+      <section className={classes.app}>
+        <TerminalOutput />
+        <TerminalInput />
+      </section>
+    </StdioSocketProvider>
   );
 };

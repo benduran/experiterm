@@ -63,6 +63,12 @@ export function extendViteBaseConfig({
     },
     root: process.cwd(),
     server: {
+      proxy: {
+        '/stdio': {
+          changeOrigin: true,
+          target: 'http://localhost:2345',
+        },
+      },
       port: 1234,
       strictPort: true, // Fail fast if port is taken
     },

@@ -1,0 +1,6 @@
+{
+  "name": "@experiterm/shared",
+  "description": "Things that are shared between the client and the server",
+  "main": "./src/index.ts",
+  "version": "0.0.1"
+}

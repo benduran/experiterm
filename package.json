@@ -14,12 +14,14 @@
     "@commitlint/cli": "12.1.4",
     "@commitlint/config-conventional": "12.1.4",
     "@types/node": "^16.4.0",
-    "@zeit/git-hooks": "^0.1.4",
     "@vitejs/plugin-react-refresh": "^1.3.5",
+    "@zeit/git-hooks": "^0.1.4",
     "eslint-config-react-yas": "^1.3.0",
     "lerna": "^4.0.0",
     "lint-staged": "^11.0.1",
     "npm-run-all": "^4.1.5",
+    "react-scripts": "^4.0.3",
+    "stmux": "^1.8.1",
     "typescript": "^4.3.5",
     "vite": "^2.4.3",
     "vite-plugin-env-compatible": "^1.0.0",
@@ -32,7 +34,8 @@
     "git-pre-commit": "lerna run --stream precommit --since HEAD",
     "lint": "lerna run lint",
     "start:ui": "yarn workspace @experiterm/client start",
-    "start:daemon": "yarn workspace @experiterm/daemon start"
+    "start:daemon": "yarn workspace @experiterm/daemon start",
+    "start": "stmux -e ERROR -m beep,system -M -- [ [ \"yarn start:ui\" : \"yarn start:daemon\" ] ]"
   },
   "lint-staged": {
     "*.{ts,tsx}": "yarn lint"

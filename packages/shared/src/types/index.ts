@@ -1,0 +1,16 @@
+export enum StdioMessageDirection {
+  INPUT = 'INPUT',
+  OUTPUT = 'OUTPUT',
+}
+
+export enum StdioMessageType {
+  HELLO = 'HELLO',
+  SHELL_START = 'SHELL_START',
+}
+
+export interface StdioMessage {
+  direction: StdioMessageDirection;
+  message: string;
+  time: number;
+  type: StdioMessageType;
+}

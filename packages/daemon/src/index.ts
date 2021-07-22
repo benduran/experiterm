@@ -1,6 +1,8 @@
 import express from 'express';
 import { Server as WsServer } from 'ws';
 
+import { onSocketConnection } from './socket';
+
 function launchDaemonServer() {
   const app = express();
   if (process.env.NODE_ENV === 'production') {
@@ -13,9 +15,7 @@ function launchDaemonServer() {
     server: listener,
     path: '/stdio',
   });
-  wss.on('connection', () => {
-    console.info('TODO: Bind logic for connections here');
-  });
+  wss.on('connection', onSocketConnection);
 }
 
 launchDaemonServer();

@@ -2,17 +2,18 @@
 import { StdioMessage, StdioMessageDirection, StdioMessageType } from '@experiterm/shared';
 import React, { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 
-export interface StdioSocketContextProps {
-  socket: WebSocket;
-
-  messages: StdioMessage[];
-}
-
-const context = createContext<StdioSocketContextProps | null>(null);
-
 function formatMessage(msg: Omit<StdioMessage, 'direction'>) {
   return JSON.stringify({ ...msg, direction: StdioMessageDirection.INPUT });
 }
+
+export interface StdioSocketContextProps {
+  messages: StdioMessage[];
+  socket: WebSocket;
+
+  sendMessage: (...args: Parameters<typeof formatMessage>) => void;
+}
+
+const context = createContext<StdioSocketContextProps | null>(null);
 
 export const StdioSocketProvider = ({ children }: { children: React.ReactNode | React.ReactNode[] }) => {
   const sockRef = useRef(new WebSocket(process.env.STDIO_SOCKET_URL));
@@ -30,8 +31,15 @@ export const StdioSocketProvider = ({ children }: { children: React.ReactNode | 
     }
     setMessages(prev => prev.concat(parsed));
   }, []);
+  const sendMessage = useCallback(
+    (...args: Parameters<typeof formatMessage>) => sockRef.current.send(formatMessage(...args)),
+    [],
+  );
 
-  const props = useMemo((): StdioSocketContextProps => ({ messages, socket: sockRef.current }), [messages]);
+  const props = useMemo(
+    (): StdioSocketContextProps => ({ messages, sendMessage, socket: sockRef.current }),
+    [messages, sendMessage],
+  );
 
   useEffect(() => {
     const { current: sock } = sockRef;

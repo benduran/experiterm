@@ -1,27 +1,39 @@
-import { spawn } from 'child_process';
+import { spawn } from 'node-pty';
+import os from 'os';
 
 import { logger } from '../logger';
 
-logger.info('Starting terminal...');
-// let's only deal with a singleton process right now
-const terminalProcess = spawn('/usr/bin/zsh', ['-i']);
-let stdoutBuffer = '';
+export class Terminal {
+  static lineEnding = os.platform() === 'win32' ? '\r\n' : '\n';
+  static shell = os.platform() === 'win32' ? 'powershell.exe' : 'bash';
 
-terminalProcess.stdout.on('data', msg => {
-  logger.info('Received message from terminal process');
-  stdoutBuffer += msg.toString();
-  console.info(stdoutBuffer);
-});
+  private terminalProcess: ReturnType<typeof spawn>;
+  private stdoutBuffer = '';
+  private onDataHandlers: Array<(msg: string) => void>;
 
-let stdErrBuffer = '';
-terminalProcess.stderr.on('data', msg => {
-  logger.error('Received error from terminal process');
-  stdErrBuffer += msg.toString();
-  console.info(stdErrBuffer);
-});
+  constructor() {
+    logger.info('Starting terminal...');
+    this.terminalProcess = spawn(Terminal.shell, [], {
+      cwd: process.env.HOME,
+      env: process.env as Record<string, string>,
+    });
 
-export function sendCommand(cmdWithArgs: string) {
-  logger.info(`Sending command ${cmdWithArgs}`);
-  terminalProcess.stdin.write(`${cmdWithArgs}\n`);
-  terminalProcess.stdin.end();
+    this.onDataHandlers = [];
+
+    this.terminalProcess.onData(this.handleOnData);
+  }
+
+  onData(handler: (msg: string) => void) {
+    this.onDataHandlers.push(handler);
+  }
+
+  sendCommand(cmdWithArgs: string) {
+    logger.info(`Sending command ${cmdWithArgs}`);
+    this.terminalProcess.write(`${cmdWithArgs}${Terminal.lineEnding}`);
+  }
+
+  handleOnData = (msg: string) => {
+    logger.info('Received message from terminal process');
+    this.onDataHandlers.forEach(handler => handler(msg));
+  };
 }

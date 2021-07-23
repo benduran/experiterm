@@ -6,6 +6,8 @@ export enum StdioMessageDirection {
 export enum StdioMessageType {
   HELLO = 'HELLO',
   SHELL_START = 'SHELL_START',
+  STDIN = 'STDIN',
+  STDOUT = 'STDOUT',
 }
 
 export interface StdioMessage {

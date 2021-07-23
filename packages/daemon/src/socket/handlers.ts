@@ -2,18 +2,21 @@ import { StdioMessage, StdioMessageDirection, StdioMessageType } from '@experite
 import WebSocket from 'ws';
 
 import { logger } from '../logger';
-import { sendCommand } from '../terminal/terminal';
+import { Terminal } from '../terminal';
 
 function formatMessage(msg: Omit<StdioMessage, 'direction'>) {
   return JSON.stringify({ ...msg, direction: StdioMessageDirection.OUTPUT });
 }
 
-function handleMessage(socket: WebSocket) {
-  return (e: { data: string }) => {
-    const parsed = JSON.parse(e.data) as StdioMessage;
+function handleSocketMessage(terminal: Terminal, socket: WebSocket) {
+  return ({ data: msg }: { data: string }) => {
+    const parsed = JSON.parse(msg) as StdioMessage;
     switch (parsed.type) {
       case StdioMessageType.SHELL_START:
-        sendCommand('zsh');
+        terminal.sendCommand('zsh');
+        break;
+      case StdioMessageType.STDIN:
+        terminal.sendCommand(parsed.message);
         break;
       default:
         break;
@@ -22,8 +25,9 @@ function handleMessage(socket: WebSocket) {
 }
 
 function handleClose(
+  terminal: Terminal,
   socket: WebSocket,
-  onMessageHandler: ReturnType<typeof handleMessage>,
+  onMessageHandler: ReturnType<typeof handleSocketMessage>,
   onErrorHandler: ReturnType<typeof handleError>,
 ) {
   const closeHandler = () => {
@@ -35,7 +39,7 @@ function handleClose(
   return closeHandler;
 }
 
-function handleError(socket: WebSocket) {
+function handleError(terminal: Terminal, socket: WebSocket) {
   return () => logger.error('Socket experienced a connection error');
 }
 
@@ -43,11 +47,15 @@ function handleError(socket: WebSocket) {
  * Sets up the handlers for messages and such over the socket
  */
 export function onSocketConnection(socket: WebSocket) {
+  const terminal = new Terminal();
   logger.info('Socket has connected');
-  const onMessage = handleMessage(socket);
-  const onError = handleError(socket);
-  const onClose = handleClose(socket, onMessage, onError);
-  socket.addEventListener('message', onMessage);
+  const onSocketMessage = handleSocketMessage(terminal, socket);
+  const onError = handleError(terminal, socket);
+  const onClose = handleClose(terminal, socket, onSocketMessage, onError);
+  terminal.onData(msg => {
+    socket.send(formatMessage({ message: msg, time: Date.now(), type: StdioMessageType.STDOUT }));
+  });
+  socket.addEventListener('message', onSocketMessage);
   socket.addEventListener('close', onClose);
   socket.addEventListener('error', onError);
   socket.send(formatMessage({ message: 'Hello!', time: Date.now(), type: StdioMessageType.HELLO }));

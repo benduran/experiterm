@@ -1,13 +1,21 @@
-import { StdioMessage, StdioMessageDirection, StdioMessageType } from '@experiterm/shared';
+import 'ts-replace-all';
+
+import { ansiIgnore, StdioMessage, StdioMessageDirection, StdioMessageType } from '@experiterm/shared';
 import WebSocket from 'ws';
 
 import { logger } from '../logger';
 import { Terminal } from '../terminal';
 
+/**
+ * Formats an outbound message that's meant to be received by the browser's socket connection
+ */
 function formatMessage(msg: Omit<StdioMessage, 'direction'>) {
   return JSON.stringify({ ...msg, direction: StdioMessageDirection.OUTPUT });
 }
 
+/**
+ * Handles an inbound message from the browser, meant to be piped to STDIN
+ */
 function handleSocketMessage(terminal: Terminal, socket: WebSocket) {
   return ({ data: msg }: { data: string }) => {
     const parsed = JSON.parse(msg) as StdioMessage;
@@ -43,6 +51,10 @@ function handleError(terminal: Terminal, socket: WebSocket) {
   return () => logger.error('Socket experienced a connection error');
 }
 
+function removeAnsiIgnoreChars(msg: string) {
+  return Object.values(ansiIgnore).reduce((prev, sequence) => prev.replaceAll(sequence, ''), msg);
+}
+
 /**
  * Sets up the handlers for messages and such over the socket
  */
@@ -53,7 +65,9 @@ export function onSocketConnection(socket: WebSocket) {
   const onError = handleError(terminal, socket);
   const onClose = handleClose(terminal, socket, onSocketMessage, onError);
   terminal.onData(msg => {
-    socket.send(formatMessage({ message: msg, time: Date.now(), type: StdioMessageType.STDOUT }));
+    socket.send(
+      formatMessage({ message: removeAnsiIgnoreChars(msg), time: Date.now(), type: StdioMessageType.STDOUT }),
+    );
   });
   socket.addEventListener('message', onSocketMessage);
   socket.addEventListener('close', onClose);

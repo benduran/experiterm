@@ -38,6 +38,7 @@ export const colors = {
   brightWhite: '#f7f7f7',
   background: '#090300',
   foreground: '#a5a2a2',
+  gray: '#777',
   selectionBackground: '#4a4543',
   cursorColor: '#a5a2a2',
 };

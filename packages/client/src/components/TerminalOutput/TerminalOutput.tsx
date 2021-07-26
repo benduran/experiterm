@@ -3,6 +3,7 @@ import { useCreateStyles } from 'simplestyle-js/esm/react';
 
 import { useStdioSocketContext } from '../../context';
 import { borderRadius, colors, spacings, toPx } from '../../theme';
+import { TerminalLine } from './TerminalLine';
 
 export const TerminalOutput = () => {
   const [listRef, setListRef] = useState<HTMLUListElement | null>(null);
@@ -34,12 +35,16 @@ export const TerminalOutput = () => {
       messages.map(msg => (
         <li className={classes.terminalLine} key={msg.time}>
           {msg.message.split('\n').map(line => (
-            <div key={line}>{line}</div>
+            <div key={line}>
+              <TerminalLine message={line} />{' '}
+            </div>
           ))}
         </li>
       )),
     [classes.terminalLine, messages],
   );
+
+  console.info(messages);
 
   const messagesLen = messages.length;
 

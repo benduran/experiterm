@@ -2,5 +2,12 @@
   "name": "@experiterm/shared",
   "description": "Things that are shared between the client and the server",
   "main": "./src/index.ts",
-  "version": "0.0.1"
+  "version": "0.0.1",
+  "scripts": {
+    "lint": "eslint './src/**/*.{tsx,ts}'",
+    "precommit": "lint-staged --allow-empty"
+  },
+  "lint-staged": {
+    "*.{ts,tsx}": "yarn lint"
+  }
 }

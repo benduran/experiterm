@@ -3,7 +3,6 @@ import { useCreateStyles } from 'simplestyle-js/esm/react';
 
 import { StdioSocketProvider } from '../../context';
 import { colors, spacings, toPx } from '../../theme';
-import { TerminalInput } from '../TerminalInput';
 import { TerminalOutput } from '../TerminalOutput';
 
 export const App = () => {
@@ -24,7 +23,6 @@ export const App = () => {
     <StdioSocketProvider>
       <section className={classes.app}>
         <TerminalOutput />
-        <TerminalInput />
       </section>
     </StdioSocketProvider>
   );

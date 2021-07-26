@@ -1,4 +1,4 @@
-import React, { useLayoutEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { useCreateStyles } from 'simplestyle-js/esm/react';
 
 import { useStdioSocketContext } from '../../context';
@@ -6,6 +6,7 @@ import { borderRadius, colors, spacings, toPx } from '../../theme';
 
 export const TerminalOutput = () => {
   const [listRef, setListRef] = useState<HTMLUListElement | null>(null);
+  const scrolledToTopRef = useRef(false);
   const classes = useCreateStyles({
     terminalLine: {
       padding: toPx(spacings.space1),
@@ -42,10 +43,22 @@ export const TerminalOutput = () => {
 
   const messagesLen = messages.length;
 
+  const handleSetScrollTop = useCallback((e: Event) => {
+    const { clientHeight, scrollHeight, scrollTop } = e.currentTarget as HTMLUListElement;
+    scrolledToTopRef.current = clientHeight + scrollTop >= scrollHeight;
+  }, []);
+
+  useEffect(() => {
+    if (listRef) {
+      listRef.addEventListener('scroll', handleSetScrollTop);
+      return () => listRef.removeEventListener('scroll', handleSetScrollTop);
+    }
+  }, [handleSetScrollTop, listRef]);
+
   useLayoutEffect(() => {
     // TODO: This isn't going to work 100% of the time.
     // If a user is scrolled up a bit, we don't want to chang their scroll position
-    if (listRef && messagesLen) {
+    if (!scrolledToTopRef.current && listRef && messagesLen) {
       const allItems = listRef.querySelectorAll('li');
       const lastItem = allItems ? allItems[allItems.length - 1] : null;
       if (lastItem) lastItem.scrollIntoView({ behavior: 'smooth', block: 'end' });

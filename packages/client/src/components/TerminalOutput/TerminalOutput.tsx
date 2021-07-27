@@ -3,6 +3,7 @@ import { useCreateStyles } from 'simplestyle-js/esm/react';
 
 import { useStdioSocketContext } from '../../context';
 import { borderRadius, colors, spacings, toPx } from '../../theme';
+import { TerminalInput } from '../TerminalInput';
 import { TerminalLine } from './TerminalLine';
 
 export const TerminalOutput = () => {
@@ -30,19 +31,27 @@ export const TerminalOutput = () => {
 
   const { messages } = useStdioSocketContext();
 
-  const messageComponents = useMemo(
-    () =>
-      messages.map(msg => (
-        <li className={classes.terminalLine} key={msg.time}>
-          {msg.message.split('\n').map(line => (
-            <div key={line}>
-              <TerminalLine message={line} />{' '}
-            </div>
-          ))}
-        </li>
-      )),
-    [classes.terminalLine, messages],
-  );
+  const messageComponents = useMemo(() => {
+    const filteredMessages = messages.flatMap(msg => msg.message.split('\n')).filter(line => line.trim().length > 0);
+    return filteredMessages.reduce((prev, line, i) => {
+      if (!prev.length || !line.endsWith('\r') || !line.startsWith('\r')) {
+        prev.push(
+          <li className={classes.terminalLine} key={line}>
+            <TerminalLine message={line} />
+            {i === filteredMessages.length - 1 && <TerminalInput />}
+          </li>,
+        );
+      } else {
+        prev[prev.length - 1] = (
+          <li className={classes.terminalLine} key={line}>
+            <TerminalLine message={line} />
+            {i === filteredMessages.length - 1 && <TerminalInput />}
+          </li>
+        );
+      }
+      return prev;
+    }, [] as React.ReactNode[]);
+  }, [classes.terminalLine, messages]);
 
   console.info(messages);
 

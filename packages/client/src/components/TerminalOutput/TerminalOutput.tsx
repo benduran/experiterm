@@ -32,24 +32,14 @@ export const TerminalOutput = () => {
   const { messages } = useStdioSocketContext();
 
   const messageComponents = useMemo(() => {
-    const filteredMessages = messages.flatMap(msg => msg.message.split('\n')).filter(line => line.trim().length > 0);
-    return filteredMessages.reduce((prev, line, i) => {
-      if (!prev.length || !line.endsWith('\r') || !line.startsWith('\r')) {
-        prev.push(
-          <li className={classes.terminalLine} key={line}>
-            <TerminalLine message={line} />
-            {i === filteredMessages.length - 1 && <TerminalInput />}
-          </li>,
-        );
-      } else {
-        prev[prev.length - 1] = (
-          <li className={classes.terminalLine} key={line}>
-            <TerminalLine message={line} />
-            {i === filteredMessages.length - 1 && <TerminalInput />}
-          </li>
-        );
-      }
-      return prev;
+    const filteredMessages = messages.map(msg => msg.message).filter(line => line.trim().length > 0);
+    return filteredMessages.map((line, i) => {
+      return (
+        <li className={classes.terminalLine} key={line}>
+          <TerminalLine message={line} />
+          {i === filteredMessages.length - 1 && <TerminalInput />}
+        </li>
+      );
     }, [] as React.ReactNode[]);
   }, [classes.terminalLine, messages]);
 

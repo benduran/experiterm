@@ -32,6 +32,11 @@ export class Terminal {
     this.terminalProcess.write(`${cmdWithArgs}${Terminal.lineEnding}`);
   }
 
+  kill() {
+    this.terminalProcess.kill();
+    this.onDataHandlers = [];
+  }
+
   handleOnData = (msg: string) => {
     logger.info('Received message from terminal process');
     this.onDataHandlers.forEach(handler => handler(msg));

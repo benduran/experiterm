@@ -43,6 +43,8 @@ function handleClose(
     socket.removeEventListener('message', onMessageHandler);
     socket.removeEventListener('close', closeHandler);
     logger.warn('Socket was closed');
+    terminal.kill();
+    logger.warn('Terminal was killed');
   };
   return closeHandler;
 }

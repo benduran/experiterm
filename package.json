@@ -43,6 +43,6 @@
     "start": "stmux -e ERROR -m beep,system -M -- [ [ \"yarn start:ui\" : \"yarn start:daemon\" ] ]"
   },
   "lint-staged": {
-    "*.{ts,tsx}": "yarn lint"
+    "*.{ts,tsx}": "eslint"
   }
 }

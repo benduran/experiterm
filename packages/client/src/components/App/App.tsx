@@ -3,7 +3,7 @@ import { useCreateStyles } from 'simplestyle-js/esm/react';
 
 import { StdioSocketProvider } from '../../context';
 import { colors, spacings, toPx } from '../../theme';
-import { TerminalOutput } from '../TerminalOutput';
+import { XTerm } from '../XTerm';
 
 export const App = () => {
   const classes = useCreateStyles({
@@ -22,7 +22,7 @@ export const App = () => {
   return (
     <StdioSocketProvider>
       <section className={classes.app}>
-        <TerminalOutput />
+        <XTerm />
       </section>
     </StdioSocketProvider>
   );

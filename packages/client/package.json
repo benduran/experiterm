@@ -7,17 +7,10 @@
   "license": "MIT",
   "private": true,
   "scripts": {
-    "build": "vite build",
+    "build": "react-app-rewired build",
     "lint": "eslint './src/**/*.{tsx,ts}'",
     "precommit": "lint-staged --allow-empty",
-    "start": "run-p vite:start typecheck:watch",
-    "typecheck:watch": "tsc --project ./tsconfig.json --noEmit --watch",
-    "vite:start": "vite"
-  },
-  "validators": {
-    "*.{ts,tsx}": [
-      "@parcel/validator-typescript"
-    ]
+    "start": "react-app-rewired start"
   },
   "devDependencies": {
     "@types/react": "^17.0.14",
@@ -33,5 +26,13 @@
   },
   "lint-staged": {
     "*.{ts,tsx}": "yarn lint"
+  },
+  "browserslist": {
+    "production": [
+      "since 2020"
+    ],
+    "development": [
+      "since 2021"
+    ]
   }
 }

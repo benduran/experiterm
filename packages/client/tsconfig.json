@@ -6,7 +6,15 @@
     "typeRoots": [
       "../../node_modules/@types",
       "./@types"
-    ]
+    ],
+    "allowJs": true,
+    "noFallthroughCasesInSwitch": true,
+    "module": "esnext",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "noEmit": true
   },
-  "include": ["./src"]
+  "include": [
+    "./src"
+  ]
 }

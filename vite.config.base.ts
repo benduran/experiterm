@@ -28,7 +28,7 @@ export function extendViteBaseConfig({
   const env: Env = {
     APP_NAME: `"${appName}"`,
     APP_VERSION: `"${version}"`,
-    BUILD_BRANCH: `"${process.env.BRANCH || process.env.CARSON_NETFLIX_BUILD_BRANCH || ''}"`,
+    BUILD_BRANCH: `"${process.env.BRANCH || ''}"`,
     BUILD_SHA: `"${process.env.SHA || ''}"`,
     BUILD_TIME: `"${now}"`,
     BUILD_URL: `"${process.env.BUILD_URL || ''}"`,

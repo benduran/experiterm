@@ -1,7 +1,9 @@
 import 'xterm/css/xterm.css';
 
-import React, { useEffect, useState } from 'react';
-import { Terminal } from 'xterm';
+import { StdioMessageType } from '@experiterm/shared';
+import React, { useCallback, useEffect, useState } from 'react';
+import { useCreateStyles } from 'simplestyle-js/esm/react';
+import { IEvent, Terminal } from 'xterm';
 
 import { useStdioSocketContext } from '../../context';
 
@@ -10,7 +12,19 @@ interface XTermProps {
 }
 
 export const XTerm = ({ className }: XTermProps) => {
-  const { messages } = useStdioSocketContext();
+  const classes = useCreateStyles({
+    terminalDivWrapper: {
+      '& > .terminal': {
+        flexGrow: 1,
+        overflowY: 'auto',
+      },
+      display: 'flex',
+      flexDirection: 'column',
+      flexGrow: 1,
+      minHeight: 0,
+    },
+  });
+  const { messages, sendMessage } = useStdioSocketContext();
   const [terminalDiv, setTerminalDiv] = useState<HTMLDivElement | null>(null);
   const [xterm, setXterm] = useState<Terminal | null>(null);
   const lastMessage = messages.length ? messages[messages.length - 1] : null;
@@ -20,14 +34,24 @@ export const XTerm = ({ className }: XTermProps) => {
       const t = new Terminal({
         rendererType: 'canvas',
       });
+      t.onData(msg => {
+        sendMessage({
+          message: msg,
+          time: Date.now(),
+          type: StdioMessageType.STDIN,
+        });
+      });
       t.open(terminalDiv);
       setXterm(t);
     }
-  }, [terminalDiv, xterm]);
+  }, [sendMessage, terminalDiv, xterm]);
 
   useEffect(() => {
-    if (xterm && lastMessage) xterm.write(lastMessage.message);
+    if (xterm && lastMessage) {
+      console.info(`%cWriting message to xterm: ${lastMessage.message}`, 'font-weight: bold; color: blue;');
+      xterm.write(lastMessage.message);
+    }
   }, [lastMessage, xterm]);
 
-  return <div className={className} ref={setTerminalDiv} />;
+  return <div className={`${classes.terminalDivWrapper} ${className || ''}`} ref={setTerminalDiv} />;
 };

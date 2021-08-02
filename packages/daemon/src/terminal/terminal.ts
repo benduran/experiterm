@@ -29,7 +29,7 @@ export class Terminal {
 
   sendCommand(cmdWithArgs: string) {
     logger.info(`Sending command ${cmdWithArgs}`);
-    this.terminalProcess.write(`${cmdWithArgs}${Terminal.lineEnding}`);
+    this.terminalProcess.write(cmdWithArgs);
   }
 
   kill() {
